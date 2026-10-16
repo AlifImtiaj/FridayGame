@@ -4,6 +4,7 @@
 /build-*/
 /cmake-build-*/
 /out/
+/.vs/
 
 # CMake generated files
 CMakeFiles/
@@ -19,3 +20,5 @@ compile_commands.json
 *.a
 *.lib
 *.pdb
+
+CMakePresets.json
