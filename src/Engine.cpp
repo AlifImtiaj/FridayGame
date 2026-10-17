@@ -4,6 +4,7 @@
 #include <SDL3/SDL.h>
 #include <chrono>
 
+
 friday::Engine::Engine(const std::string& title, int width, int height)
     : m_windowTitle(title),
     m_windowSize(width, height)
@@ -72,7 +73,7 @@ void friday::Engine::HandleInput() {
             m_targetFPS = 75;
             break;
         case SDL_SCANCODE_3:
-            m_targetFPS = 90;
+            m_targetFPS = 10;
             break;
         case SDL_SCANCODE_4:
             m_isVsyncOn = !m_isVsyncOn;
@@ -134,14 +135,11 @@ void friday::Engine::Run() {
 }
 
 void friday::Engine::Start() {
-
 }
 
 void friday::Engine::Update() {
 
 }
-
-
 
 void friday::Engine::Render() {
     SDL_SetRenderDrawColor(m_renderer, 20, 10, 30, 255);

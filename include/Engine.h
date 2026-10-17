@@ -2,7 +2,10 @@
 #include <string>
 
 #include <SDL3/SDL.h>
-#include <glm/vec2.hpp> 
+#include <glm/vec2.hpp>
+
+#include "Image.h"
+
 
 namespace friday {
 
@@ -22,7 +25,7 @@ namespace friday {
 
 		float m_targetFPS = 0;
 		float m_deltaTime = 0;
-
+		
 
 	public:
 		Engine(const std::string& title, int width, int height);
