@@ -30,8 +30,11 @@ namespace friday {
         ~Image();
         
     private:
+        void UpdateOnDimensionChange();
+    
+    public:
         void CreateTexture(SDL_Renderer* renderer);
-        
+
         // getter and setter
         void SetPosition(glm::vec2 position);
         void SetPosition(float x, float y);
