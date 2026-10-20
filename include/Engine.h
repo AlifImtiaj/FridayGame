@@ -3,16 +3,16 @@
 
 #include <SDL3/SDL.h>
 #include <glm/vec2.hpp>
+#include <SDL3_mixer/SDL_mixer.h>
 
-#include "Image.h"
 
-
-namespace friday {
+namespace Friday {
 
 	class Engine {
 	private:
 		SDL_Window* m_window = nullptr;
 		SDL_Renderer* m_renderer = nullptr;
+		MIX_Mixer* m_mixer = nullptr;
 
 		SDL_Event e;
 
@@ -23,7 +23,7 @@ namespace friday {
 		bool m_isGameRunning = false;
 		bool m_isVsyncOn = false;
 
-		float m_targetFPS = 0;
+		float m_targetFPS = 60;
 		float m_deltaTime = 0;
 		
 

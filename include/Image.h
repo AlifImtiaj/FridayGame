@@ -5,7 +5,7 @@
 #include <SDL3/SDL_render.h>
 #include <glm/vec2.hpp>
 
-namespace friday {
+namespace Friday {
     class Image {
     private:
         SDL_Surface * m_surface = nullptr;
@@ -15,7 +15,7 @@ namespace friday {
         glm::vec2 m_scale {1,1};
         glm::vec2 m_imageSize {0,0};
 
-        float m_rotation;
+        float m_rotation = 0.0f;
 
         SDL_FRect m_src;
         SDL_FRect m_dst;
@@ -30,24 +30,26 @@ namespace friday {
         ~Image();
         
     private:
-        void UpdateOnDimensionChange();
+        void UpdateTransform();
     
     public:
         void CreateTexture(SDL_Renderer* renderer);
 
-        // getter and setter
+        // setter
         void SetPosition(glm::vec2 position);
         void SetPosition(float x, float y);
         void SetScale(glm::vec2 scale);
         void SetScale(float x, float y);
         void SetRotation(float rotation);
 
-        glm::vec2 GetPosition();
-        glm::vec2 GetScale();
-        float GetRotation();
+        // getter 
+        glm::vec2 GetPosition() const;
+        glm::vec2 GetScale() const;
+        float GetRotation() const;
+        glm::vec2 GetImageSize() const;
 
 
-        void Render(SDL_Renderer* renderer);
+        void Render(SDL_Renderer* renderer) const;
 
     };
 }

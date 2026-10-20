@@ -1,6 +1,6 @@
 #include "Image.h"
 
-namespace friday {
+namespace Friday {
 Image::Image(const std::string &filename) {
     m_filePath = filename;
 }
@@ -28,17 +28,20 @@ Image::~Image() {
 }
 
 void Image::CreateTexture(SDL_Renderer* renderer) {
+
+    if (m_texture) return;
+
     m_surface = IMG_Load(m_filePath.c_str());
 
     if (!m_surface) {
-        SDL_Log("Failed to load image '%s': %s", m_filePath.c_str(), SDL_GetError());
+        SDL_Log("Failed to load image '%s'. Error: %s", m_filePath.c_str(), SDL_GetError());
         return;
     }
 
     m_texture = SDL_CreateTextureFromSurface(renderer, m_surface);
 
     if (!m_texture) {
-        SDL_Log("Failed to create texture: %s", SDL_GetError());
+        SDL_Log("Failed to create texture. Error: %s", SDL_GetError());
         SDL_DestroySurface(m_surface);
         m_surface = nullptr;
         return;
@@ -49,57 +52,58 @@ void Image::CreateTexture(SDL_Renderer* renderer) {
     SDL_DestroySurface(m_surface);
     m_surface = nullptr;
 
-    UpdateOnDimensionChange();
+    UpdateTransform();
 }
 
-void Image::UpdateOnDimensionChange() {
+void Image::UpdateTransform() {
     m_src = {0, 0, m_imageSize.x, m_imageSize.y};
     m_dst = {m_position.x, m_position.y, m_scale.x * m_imageSize.x, m_scale.y * m_imageSize.y};
 }
 
-// getter and setter part
-#pragma region -GETTER SETTER-
+// setter
 void Image::SetPosition(glm::vec2 position) {
     m_position = position;
-    UpdateOnDimensionChange();
+    UpdateTransform();
 }
 
 void Image::SetPosition(float x, float y) {
     m_position.x = x;
     m_position.y = y;
-    UpdateOnDimensionChange();
+    UpdateTransform();
 }
 void Image::SetScale(glm::vec2 scale) {
     m_scale = scale;          
-    UpdateOnDimensionChange();
+    UpdateTransform();
 }
 void Image::SetScale(float x, float y) {
     m_scale.x = x;
     m_scale.y = y;
-    UpdateOnDimensionChange();
+    UpdateTransform();
 }
 void Image::SetRotation(float rotation) {
     m_rotation = rotation;
-    UpdateOnDimensionChange();
+    UpdateTransform();
 }
 
-glm::vec2 Image::GetPosition() {
+// Getter
+glm::vec2 Image::GetPosition() const{
     return m_position;
 }
-glm::vec2 Image::GetScale() {
+glm::vec2 Image::GetScale() const{
     return m_scale;
 }
-float Image::GetRotation() {
+float Image::GetRotation() const{
     return m_rotation;
 }
-#pragma endregion
+glm::vec2 Image::GetImageSize() const{
+    return m_imageSize;
+}
 
-void Image::Render(SDL_Renderer *renderer) {
+void Image::Render(SDL_Renderer *renderer) const{
     if (!m_texture || !renderer) return;
 
     SDL_RenderTextureRotated(renderer, m_texture, &m_src, &m_dst, m_rotation, NULL, SDL_FlipMode::SDL_FLIP_NONE);
     
 }
-
 
 }

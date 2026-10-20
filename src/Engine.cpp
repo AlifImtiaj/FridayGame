@@ -1,28 +1,36 @@
 
 #include "Engine.h"
 
-#include <SDL3/SDL.h>
 #include <chrono>
 
 
-friday::Engine::Engine(const std::string& title, int width, int height)
+Friday::Engine::Engine(const std::string& title, int width, int height)
     : m_windowTitle(title),
     m_windowSize(width, height)
 {
 }
 
-friday::Engine::~Engine() {
+Friday::Engine::~Engine() {
     if (m_renderer)
         SDL_DestroyRenderer(m_renderer);
 
     if (m_window)
         SDL_DestroyWindow(m_window);
 
+    if (m_mixer)
+        MIX_DestroyMixer(m_mixer);
+
+    MIX_Quit();
     SDL_Quit();
 }
 
-bool friday::Engine::Init() {
-    if (!SDL_Init(SDL_INIT_VIDEO)) {
+bool Friday::Engine::Init() {
+    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)) {
+        SDL_Log("Initialization failed. Error: %s\n", SDL_GetError());
+        return false;
+    }
+    if (!MIX_Init()) {
+        SDL_Log("Initialization failed. Error: %s\n", SDL_GetError());
         return false;
     }
     m_window = SDL_CreateWindow(
@@ -33,14 +41,21 @@ bool friday::Engine::Init() {
     );
 
     if (!m_window) {
-        SDL_Log("Window creation failed: %s", SDL_GetError());
+        SDL_Log("Window creation failed. Error: %s", SDL_GetError());
         return false;
     }
 
     m_renderer = SDL_CreateRenderer(m_window, nullptr);
 
     if (!m_renderer) {
-        SDL_Log("Renderer creation failed: %s", SDL_GetError());
+        SDL_Log("Renderer creation failed. Error: %s", SDL_GetError());
+        return false;
+    }
+
+
+    m_mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, nullptr);
+    if (!m_mixer) {
+        SDL_Log("Mixer Initialization failed. Error: %s\n", SDL_GetError());
         return false;
     }
 
@@ -48,52 +63,7 @@ bool friday::Engine::Init() {
     return true;
 }
 
-void friday::Engine::HandleInput() {
-    SDL_Event event;
-
-    while (SDL_PollEvent(&event)) {
-        if (event.type == SDL_EVENT_QUIT) {
-            m_isGameRunning = false;
-            continue;
-        }
-
-        if (event.type != SDL_EVENT_KEY_DOWN ||
-            event.key.repeat) {
-            continue;
-        }
-
-        switch (event.key.scancode) {
-        case SDL_SCANCODE_0:
-            m_targetFPS = 0; // uncapped fps
-            break;
-        case SDL_SCANCODE_1:
-            m_targetFPS = 60;
-            break;
-        case SDL_SCANCODE_2:
-            m_targetFPS = 75;
-            break;
-        case SDL_SCANCODE_3:
-            m_targetFPS = 10;
-            break;
-        case SDL_SCANCODE_4:
-            m_isVsyncOn = !m_isVsyncOn;
-            SDL_SetRenderVSync(m_renderer, m_isVsyncOn);
-            break;
-        default:
-            break;
-        }
-    }
-}
-
-void friday::Engine::Tick() {
-    HandleInput();
-    Update();
-    Render();
-}
-
-
-void friday::Engine::Run() {
-
+void Friday::Engine::Run() {
     Start();
     using clock = std::chrono::steady_clock;
 
@@ -134,15 +104,71 @@ void friday::Engine::Run() {
     }
 }
 
-void friday::Engine::Start() {
+void Friday::Engine::Tick() {
+    HandleInput();
+    Update();
+    Render();
 }
 
-void friday::Engine::Update() {
+void Friday::Engine::HandleInput() {
+    SDL_Event event;
 
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_EVENT_QUIT) {
+            m_isGameRunning = false;
+            continue;
+        }
+
+        if (event.type != SDL_EVENT_KEY_DOWN ||
+            event.key.repeat) {
+            continue;
+        }
+
+        switch (event.type) {
+            case SDL_EVENT_WINDOW_RESIZED:
+                int x, y;
+                SDL_GetWindowSize(m_window, &x, &y);
+                m_windowSize.x = (float)x;
+                m_windowSize.y = (float)y;
+                SDL_Log("Resized\n");
+                break;
+        }
+
+        switch (event.key.scancode) {
+        case SDL_SCANCODE_0:
+            m_targetFPS = 0; // uncapped fps
+            break;
+        case SDL_SCANCODE_1:
+            m_targetFPS = 60;
+            break;
+        case SDL_SCANCODE_2:
+            m_targetFPS = 75;
+            break;
+        case SDL_SCANCODE_3:
+            m_targetFPS = 90;
+            break;
+        case SDL_SCANCODE_4:
+            m_isVsyncOn = !m_isVsyncOn;
+            SDL_SetRenderVSync(m_renderer, m_isVsyncOn);
+            SDL_Log("Vsync: %d\n", m_isVsyncOn);
+            break;
+
+        default:
+            break;
+        }
+    }
 }
 
-void friday::Engine::Render() {
-    SDL_SetRenderDrawColor(m_renderer, 20, 10, 30, 255);
+void Friday::Engine::Start() {
+    
+}
+
+void Friday::Engine::Update() {
+    
+}
+
+void Friday::Engine::Render() {
+    SDL_SetRenderDrawColor(m_renderer, 0,0,0, 255);
     SDL_RenderClear(m_renderer);
 
     SDL_RenderPresent(m_renderer);
