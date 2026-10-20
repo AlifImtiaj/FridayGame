@@ -1,6 +1,6 @@
 #include <Engine.h>
 
-using friday::Engine;
+using Friday::Engine;
 
 int main() {
 	Engine e("Game", 800, 600);

@@ -22,7 +22,6 @@ file(GLOB_RECURSE SOURCE_FILES CONFIGURE_DEPENDS
 )
 
 add_executable(Game
-    "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp"
     ${SOURCE_FILES}
 )
 
