@@ -22,6 +22,10 @@ namespace Friday {
 
         std::string m_filePath;
 
+        bool m_isFlippedHorizontally = false;
+        bool m_isFlippedVertically = false;
+        SDL_FlipMode m_flipMode = SDL_FlipMode::SDL_FLIP_NONE;
+
     public:
         Image(const std::string& filename);
         Image(const std::string& filename, glm::vec2 position);
@@ -31,6 +35,7 @@ namespace Friday {
         
     private:
         void UpdateTransform();
+        void SetFlipMode();
     
     public:
         void CreateTexture(SDL_Renderer* renderer);
@@ -48,6 +53,8 @@ namespace Friday {
         float GetRotation() const;
         glm::vec2 GetImageSize() const;
 
+        void FlipHorizontal();
+        void FlipVertical();
 
         void Render(SDL_Renderer* renderer) const;
 

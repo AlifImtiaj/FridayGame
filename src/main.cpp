@@ -3,7 +3,7 @@
 using Friday::Engine;
 
 int main() {
-	Engine e("Game", 800, 600);
+	Engine e("Game", 1280, 720);
 	if (e.Init()) {
 		e.Run();
 	}

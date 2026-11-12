@@ -60,6 +60,17 @@ void Image::UpdateTransform() {
     m_dst = {m_position.x, m_position.y, m_scale.x * m_imageSize.x, m_scale.y * m_imageSize.y};
 }
 
+void Image::SetFlipMode() {
+    if (m_isFlippedHorizontally && m_isFlippedVertically)
+        m_flipMode = SDL_FlipMode::SDL_FLIP_HORIZONTAL_AND_VERTICAL;
+    else if (m_isFlippedHorizontally)
+        m_flipMode = SDL_FlipMode::SDL_FLIP_HORIZONTAL;
+    else if (m_isFlippedVertically)
+        m_flipMode = SDL_FlipMode::SDL_FLIP_VERTICAL;
+    else
+        m_flipMode = SDL_FlipMode::SDL_FLIP_NONE;
+}
+
 // setter
 void Image::SetPosition(glm::vec2 position) {
     m_position = position;
@@ -99,10 +110,20 @@ glm::vec2 Image::GetImageSize() const{
     return m_imageSize;
 }
 
-void Image::Render(SDL_Renderer *renderer) const{
+void Image::FlipHorizontal() {
+    m_isFlippedHorizontally = !m_isFlippedHorizontally;
+    SetFlipMode();
+}
+
+void Image::FlipVertical() {
+    m_isFlippedVertically = !m_isFlippedVertically;
+    SetFlipMode();
+}
+
+void Image::Render(SDL_Renderer *renderer) const {
     if (!m_texture || !renderer) return;
 
-    SDL_RenderTextureRotated(renderer, m_texture, &m_src, &m_dst, m_rotation, NULL, SDL_FlipMode::SDL_FLIP_NONE);
+    SDL_RenderTextureRotated(renderer, m_texture, &m_src, &m_dst, m_rotation, NULL, m_flipMode);
     
 }
 

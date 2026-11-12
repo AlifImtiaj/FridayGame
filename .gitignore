@@ -22,3 +22,5 @@ compile_commands.json
 *.pdb
 
 CMakePresets.json
+
+devlog/entries/template.md

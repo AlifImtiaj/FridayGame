@@ -2,6 +2,10 @@
 #include "Engine.h"
 
 #include <chrono>
+#include "Image.h"
+
+Friday::Image image("resource/geometry_dash.png");
+Friday::Image back("resource/back.jpeg");
 
 
 Friday::Engine::Engine(const std::string& title, int width, int height)
@@ -25,6 +29,7 @@ Friday::Engine::~Engine() {
 }
 
 bool Friday::Engine::Init() {
+    m_keyState = SDL_GetKeyboardState(NULL);
     if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO)) {
         SDL_Log("Initialization failed. Error: %s\n", SDL_GetError());
         return false;
@@ -51,6 +56,11 @@ bool Friday::Engine::Init() {
         SDL_Log("Renderer creation failed. Error: %s", SDL_GetError());
         return false;
     }
+
+    m_logicalSize.x = 1280;
+    m_logicalSize.y = 720;
+
+    SDL_SetRenderLogicalPresentation(m_renderer, m_logicalSize.x, m_logicalSize.y, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
 
     m_mixer = MIX_CreateMixerDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, nullptr);
@@ -124,16 +134,6 @@ void Friday::Engine::HandleInput() {
             continue;
         }
 
-        switch (event.type) {
-            case SDL_EVENT_WINDOW_RESIZED:
-                int x, y;
-                SDL_GetWindowSize(m_window, &x, &y);
-                m_windowSize.x = (float)x;
-                m_windowSize.y = (float)y;
-                SDL_Log("Resized\n");
-                break;
-        }
-
         switch (event.key.scancode) {
         case SDL_SCANCODE_0:
             m_targetFPS = 0; // uncapped fps
@@ -141,18 +141,11 @@ void Friday::Engine::HandleInput() {
         case SDL_SCANCODE_1:
             m_targetFPS = 60;
             break;
-        case SDL_SCANCODE_2:
-            m_targetFPS = 75;
-            break;
         case SDL_SCANCODE_3:
-            m_targetFPS = 90;
-            break;
-        case SDL_SCANCODE_4:
             m_isVsyncOn = !m_isVsyncOn;
             SDL_SetRenderVSync(m_renderer, m_isVsyncOn);
             SDL_Log("Vsync: %d\n", m_isVsyncOn);
             break;
-
         default:
             break;
         }
@@ -160,11 +153,9 @@ void Friday::Engine::HandleInput() {
 }
 
 void Friday::Engine::Start() {
-    
 }
 
 void Friday::Engine::Update() {
-    
 }
 
 void Friday::Engine::Render() {

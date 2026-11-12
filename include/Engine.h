@@ -19,13 +19,14 @@ namespace Friday {
 		std::string m_windowTitle;
 
 		glm::vec2 m_windowSize;
+		glm::vec2 m_logicalSize = {1280,720};
 
 		bool m_isGameRunning = false;
 		bool m_isVsyncOn = false;
 
 		float m_targetFPS = 60;
 		float m_deltaTime = 0;
-		
+		const bool* m_keyState = nullptr;
 
 	public:
 		Engine(const std::string& title, int width, int height);
