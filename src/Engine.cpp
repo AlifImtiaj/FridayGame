@@ -2,11 +2,10 @@
 #include "Engine.h"
 
 #include <chrono>
-#include "Image.h"
 
-Friday::Image image("resource/geometry_dash.png");
-Friday::Image back("resource/back.jpeg");
+#include "LevelManager.h"
 
+Friday::LevelManager lvManager;
 
 Friday::Engine::Engine(const std::string& title, int width, int height)
     : m_windowTitle(title),
@@ -153,14 +152,19 @@ void Friday::Engine::HandleInput() {
 }
 
 void Friday::Engine::Start() {
+    lvManager.AcquireRenderer(m_renderer);
+    lvManager.Start();
 }
 
 void Friday::Engine::Update() {
+    lvManager.Update(m_deltaTime);
 }
 
 void Friday::Engine::Render() {
     SDL_SetRenderDrawColor(m_renderer, 0,0,0, 255);
     SDL_RenderClear(m_renderer);
+
+    lvManager.Render();
 
     SDL_RenderPresent(m_renderer);
 }
